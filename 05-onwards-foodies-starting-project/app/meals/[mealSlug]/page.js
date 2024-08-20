@@ -3,6 +3,17 @@ import classes from './page.module.css';
 import { getMeal } from '@/lib/meals';
 import { notFound } from 'next/navigation';
 
+export async function generateMetadata({ params }) {
+  const meal = getMeal(params.mealSlug);
+  if (!meal) {
+    notFound();
+  }
+  return {
+    title: meal.title,
+    description: meal.summary,
+  };
+}
+
 export default function MealDetailsPage({ params }) {
   const meal = getMeal(params.mealSlug);
   console.log(meal);
@@ -16,7 +27,7 @@ export default function MealDetailsPage({ params }) {
       <header className={classes.header}>
         <div className={classes.image}>
           <Image
-            src={meal.image}
+            src={`https://jd-next-demo-users-image-2.s3.ap-southeast-2.amazonaws.com/${meal.image}`}
             alt={meal.title}
             fill
             priority

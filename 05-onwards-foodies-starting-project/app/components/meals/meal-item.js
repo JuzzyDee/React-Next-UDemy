@@ -9,7 +9,7 @@ export default function MealItem({ title, slug, image, summary, creator }) {
       <header>
         <div className={classes.image}>
           <Image
-            src={image}
+            src={`https://jd-next-demo-users-image-2.s3.ap-southeast-2.amazonaws.com/${image}`}
             alt={title}
             fill
           />

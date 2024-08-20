@@ -1,9 +1,13 @@
+import { S3 } from '@aws-sdk/client-s3';
 import fs from 'node:fs';
 
 import sql from 'better-sqlite3';
 import slugify from 'slugify';
 import xss from 'xss';
 
+const s3 = new S3({
+  region: 'ap-southeast-2',
+});
 const db = sql('meals.db');
 
 export async function getMeals() {
@@ -27,13 +31,14 @@ export async function saveMeal(meal) {
   const stream = fs.createWriteStream(`public/images/${fileName}`);
   const bufferedImage = await meal.image.arrayBuffer();
 
-  stream.write(Buffer.from(bufferedImage), (error) => {
-    if (error) {
-      throw new Error('Saving image failed');
-    }
+  await s3.putObject({
+    Bucket: 'jd-next-demo-users-image-2',
+    Key: fileName,
+    Body: Buffer.from(bufferedImage),
+    ContentType: meal.image.type,
   });
 
-  meal.image = `/images/${fileName}`;
+  meal.image = fileName;
 
   db.prepare(
     `
